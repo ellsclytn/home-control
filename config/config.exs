@@ -12,7 +12,7 @@ config :thermio,
 # Configures the endpoint
 config :thermio, Thermio.Endpoint,
   url: [host: "localhost"],
-  secret_key_base: "dQCxDKnzWsboV2laUOvZolN4K7HT5cvlfmjPjGlng1EC085Bp4dXmIKddMgRjezM",
+  secret_key_base: System.get_env("SECRET_KEY_BASE"),
   render_errors: [view: Thermio.ErrorView, accepts: ~w(html json)],
   pubsub: [name: Thermio.PubSub,
            adapter: Phoenix.PubSub.PG2]

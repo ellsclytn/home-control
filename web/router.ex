@@ -3,6 +3,9 @@ defmodule Thermio.Router do
 
   pipeline :api do
     plug :accepts, ["json"]
+    plug Joken.Plug,
+      verify: &Thermio.JWTHelpers.verify/0,
+      on_error: &Thermio.JWTHelpers.error/2
   end
 
   scope "/api", Thermio do
