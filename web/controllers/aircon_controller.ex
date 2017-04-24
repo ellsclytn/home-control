@@ -1,6 +1,8 @@
 defmodule Thermio.AirconController do
   use Thermio.Web, :controller
 
+  alias Thermio.Climate
+
   def subscribe do
     topics = ["climate"]
     qoses = [0]
@@ -9,8 +11,25 @@ defmodule Thermio.AirconController do
   end
 
   def store_climate(message) do
-    Poison.decode!(message)
-    |> IO.inspect
+    %{
+      "temperature" => temperature,
+      "humidity" => humidity,
+      "heatIndex" => heat_index
+    } = Poison.decode!(message)
+
+    changeset = Climate.changeset(%Climate{}, %{
+      "temperature" => temperature,
+      "humidity" => humidity,
+      "heat_index" => heat_index
+    })
+
+    case Repo.insert(changeset) do
+      {:error, _changeset} ->
+        IO.puts("Error inserting climate data")
+      _ ->
+        nil
+
+    end
   end
 
   def index(conn, _params) do

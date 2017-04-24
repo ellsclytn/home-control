@@ -11,10 +11,6 @@ defmodule Bus.Callback do
     IO.inspect data
   end
 
-  def on_info(data) do
-    IO.inspect data
-  end
-
   def on_message_received(topic, message) do
     case topic do
       "climate" ->
