@@ -3,8 +3,12 @@ defmodule Thermio.ClimateController do
 
   alias Thermio.Climate
 
-  def index(conn, _params) do
-    climates = Repo.all(Climate)
+  def index(conn, params) do
+    climates =
+      Thermio.Climate
+      |> order_by(desc: :inserted_at)
+      |> Repo.paginate(params)
+
     render(conn, "index.json", climates: climates)
   end
 
