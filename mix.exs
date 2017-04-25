@@ -39,7 +39,6 @@ defmodule Thermio.Mixfile do
      {:gettext, "~> 0.11"},
      {:cowboy, "~> 1.0"},
      {:joken, "~> 1.1"},
-     {:phoenix_live_reload, "~> 1.0"},
      {:bus, "~> 0.1.4"}]
   end
 
