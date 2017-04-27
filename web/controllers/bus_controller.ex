@@ -1,6 +1,7 @@
 defmodule Bus.Callback do
   def on_connect(data) do
     IO.inspect data
+    Thermio.AirconController.subscribe()
   end
 
   def on_disconnect(data) do
