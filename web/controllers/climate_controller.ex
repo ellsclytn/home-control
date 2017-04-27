@@ -5,9 +5,9 @@ defmodule Thermio.ClimateController do
 
   def index(conn, params) do
     climates =
-      Thermio.Climate
+      Ecto.Query.from(c in Thermio.Climate, where: c.inserted_at >= ago(24, "hour"))
       |> order_by(desc: :inserted_at)
-      |> Repo.paginate(params)
+      |> Thermio.Repo.all
 
     render(conn, "index.json", climates: climates)
   end

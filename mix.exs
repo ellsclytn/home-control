@@ -19,7 +19,7 @@ defmodule Thermio.Mixfile do
   def application do
     [mod: {Thermio, []},
      applications: [:bus, :phoenix, :phoenix_pubsub, :phoenix_html, :cowboy, :logger, :gettext,
-                    :phoenix_ecto, :postgrex, :scrivener_ecto]]
+                    :phoenix_ecto, :postgrex]]
   end
 
   # Specifies which paths to compile per environment.
@@ -39,8 +39,7 @@ defmodule Thermio.Mixfile do
      {:gettext, "~> 0.11"},
      {:cowboy, "~> 1.0"},
      {:joken, "~> 1.1"},
-     {:bus, "~> 0.1.4"},
-     {:scrivener_ecto, "~> 1.0"}]
+     {:bus, "~> 0.1.4"}]
   end
 
   # Aliases are shortcuts or tasks specific to the current project.

@@ -2,14 +2,7 @@ defmodule Thermio.ClimateView do
   use Thermio.Web, :view
 
   def render("index.json", %{climates: climates}) do
-    %{data: render_many(climates.entries, Thermio.ClimateView, "climate.json"),
-      meta: %{
-        page_number: climates.page_number,
-        page_size: climates.page_size,
-        total_pages: climates.total_pages,
-        total_entries: climates.total_entries
-      }
-    }
+    %{data: render_many(climates, Thermio.ClimateView, "climate.json")}
   end
 
   def render("show.json", %{climate: climate}) do
