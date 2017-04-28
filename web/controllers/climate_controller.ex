@@ -3,9 +3,10 @@ defmodule Thermio.ClimateController do
 
   alias Thermio.Climate
 
-  def index(conn, params) do
+  def index(conn, _params) do
     climates =
-      Ecto.Query.from(c in Thermio.Climate, where: c.inserted_at >= ago(24, "hour"))
+      Thermio.Climate
+      |> where([c], c.inserted_at >= ago(1, "day"))
       |> order_by(desc: :inserted_at)
       |> Thermio.Repo.all
 
