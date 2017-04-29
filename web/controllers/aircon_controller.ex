@@ -3,13 +3,6 @@ defmodule Thermio.AirconController do
 
   alias Thermio.Climate
 
-  def subscribe do
-    topics = ["climate"]
-    qoses = [0]
-    callback_fn = fn(_) -> nil end
-    Bus.Mqtt.subscribe(topics, qoses, callback_fn)
-  end
-
   def store_climate(message) do
     %{
       "temperature" => temperature,
@@ -30,9 +23,5 @@ defmodule Thermio.AirconController do
         nil
 
     end
-  end
-
-  def index(conn, _params) do
-    json conn, %{id: "status"}
   end
 end

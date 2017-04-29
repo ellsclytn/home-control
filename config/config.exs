@@ -14,25 +14,23 @@ config :thermio, Thermio.Endpoint,
   url: [host: "localhost"],
   secret_key_base: System.get_env("SECRET_KEY_BASE"),
   render_errors: [view: Thermio.ErrorView, accepts: ~w(html json)],
-  pubsub: [name: Thermio.PubSub,
-           adapter: Phoenix.PubSub.PG2]
+  pubsub: [
+    name: Thermio.PubSub,
+    adapter: Phoenix.PubSub.PG2],
+  mqtt: [
+    host: System.get_env("MQTT_SERVER"),
+    username: System.get_env("MQTT_USER"),
+    password: System.get_env("MQTT_PASS"),
+    port: String.to_integer(System.get_env("MQTT_PORT")),
+    client_id: System.get_env("MQTT_CLIENT_ID"),
+    queues: [
+      [topic: "climate", qos: 0]
+    ]]
 
 # Configures Elixir's Logger
 config :logger, :console,
   format: "$time $metadata[$level] $message\n",
   metadata: [:request_id]
-
-# Configures Bus (MQTT Client)
-config :bus,
-  host: String.to_charlist(System.get_env("MQTT_SERVER")),
-  port: String.to_integer(System.get_env("MQTT_PORT")),
-  client_id: System.get_env("MQTT_CLIENT_ID"),
-  keep_alive: 0,
-  username: System.get_env("MQTT_USER"),
-  password: System.get_env("MQTT_PASS"),
-  auto_reconnect: true,
-  auto_connect: true,
-  callback: Bus.Callback
 
 # Import environment specific config. This must remain at the bottom
 # of this file so it overrides the configuration defined above.

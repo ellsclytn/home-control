@@ -14,12 +14,20 @@ defmodule Thermio do
       supervisor(Thermio.Endpoint, []),
       # Start your own worker by calling: Thermio.Worker.start_link(arg1, arg2, arg3)
       # worker(Thermio.Worker, [arg1, arg2, arg3]),
+      supervisor(Thermio.MqttClient, [%{}])
     ]
 
     # See http://elixir-lang.org/docs/stable/elixir/Supervisor.html
     # for other strategies and supported options
     opts = [strategy: :one_for_one, name: Thermio.Supervisor]
-    Supervisor.start_link(children, opts)
+    {:ok, supervisor_pid} = supervisor = Supervisor.start_link(children, opts)
+
+    {_module, mqtt_pid, _, _} = Supervisor.which_children(supervisor_pid)
+    |> List.first
+
+    Process.register(mqtt_pid, :mqtt)
+    Thermio.MqttClient.start
+    supervisor
   end
 
   # Tell Phoenix to update the endpoint configuration

@@ -18,7 +18,7 @@ defmodule Thermio.Mixfile do
   # Type `mix help compile.app` for more information.
   def application do
     [mod: {Thermio, []},
-     applications: [:bus, :phoenix, :phoenix_pubsub, :phoenix_html, :cowboy, :logger, :gettext,
+     applications: [:phoenix, :phoenix_pubsub, :phoenix_html, :cowboy, :logger, :gettext,
                     :phoenix_ecto, :postgrex]]
   end
 
@@ -39,7 +39,7 @@ defmodule Thermio.Mixfile do
      {:gettext, "~> 0.11"},
      {:cowboy, "~> 1.0"},
      {:joken, "~> 1.1"},
-     {:bus, "~> 0.1.4"}]
+     {:hulaaki, "~> 0.0.4"}]
   end
 
   # Aliases are shortcuts or tasks specific to the current project.
