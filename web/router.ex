@@ -12,8 +12,8 @@ defmodule Thermio.Router do
   scope "/api", Thermio do
     pipe_through :api
 
-    get "/aircon", AirconController, :index
     resources "/climates", ClimateController
+    resources "/aircon", AirconController
   end
 
   scope "/health", Thermio do

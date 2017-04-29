@@ -46,6 +46,20 @@ defmodule Thermio.MqttClient do
     Logger.info("Disconnected from MQTT host #{config()[:host]}")
   end
 
+  def publish_message(topic, message) do
+    packet_id = :rand.uniform(65535)
+    options = [
+      id: packet_id,
+      topic: topic,
+      message: message,
+      dup: 0,
+      qos: 0,
+      retain: 0]
+
+    Thermio.MqttClient.publish(Process.whereis(:mqtt), options)
+    Logger.info("Published #{message} to #{topic} with packet_id #{packet_id}.")
+  end
+
   def on_subscribed_publish(options) do
     option = List.first(options)
     message = elem(option, 1).message
