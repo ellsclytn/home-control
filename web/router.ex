@@ -3,6 +3,7 @@ defmodule Thermio.Router do
 
   pipeline :api do
     plug :accepts, ["json"]
+    plug ProperCase.Plug.SnakeCaseParams
     plug Joken.Plug,
       verify: &Thermio.JWTHelpers.verify/0,
       on_error: &Thermio.JWTHelpers.error/2

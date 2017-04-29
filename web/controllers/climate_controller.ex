@@ -30,16 +30,8 @@ defmodule Thermio.ClimateController do
     end
   end
 
-  defp create_changeset(%{
-    "temperature" => temperature,
-    "humidity" => humidity,
-    "heatIndex" => heat_index
-  }) do
-    changeset = Climate.changeset(%Climate{}, %{
-      "temperature" => temperature,
-      "humidity" => humidity,
-      "heat_index" => heat_index
-    })
+  defp create_changeset(climate_params) do
+    changeset = Climate.changeset(%Climate{}, climate_params)
 
     if length(changeset.errors) > 0 do
       {:error, "Validation required"}
@@ -50,7 +42,8 @@ defmodule Thermio.ClimateController do
 
   def create_from_json(message) do
     with {:ok, json} <- Poison.decode(message),
-      {:ok, changeset} <- create_changeset(json),
+      snake_case <- ProperCase.to_snake_case(json),
+      {:ok, changeset} <- create_changeset(snake_case),
       {:ok, %{id: id}} <- Repo.insert(changeset)
     do
       Logger.info("Climate #{id} created")

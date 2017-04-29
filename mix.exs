@@ -39,7 +39,8 @@ defmodule Thermio.Mixfile do
      {:gettext, "~> 0.11"},
      {:cowboy, "~> 1.0"},
      {:joken, "~> 1.1"},
-     {:hulaaki, "~> 0.0.4"}]
+     {:hulaaki, "~> 0.0.4"},
+     {:proper_case, "~> 1.0.1"}]
   end
 
   # Aliases are shortcuts or tasks specific to the current project.

@@ -9,6 +9,9 @@ use Mix.Config
 config :thermio,
   ecto_repos: [Thermio.Repo]
 
+config :phoenix,
+  :format_encoders, json: ProperCase.JSONEncoder.CamelCase
+
 # Configures the endpoint
 config :thermio, Thermio.Endpoint,
   url: [host: "localhost"],
