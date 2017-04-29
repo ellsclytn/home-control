@@ -1,4 +1,5 @@
 defmodule Thermio.ClimateController do
+  require Logger
   use Thermio.Web, :controller
 
   alias Thermio.Climate
@@ -26,6 +27,35 @@ defmodule Thermio.ClimateController do
         conn
         |> put_status(:unprocessable_entity)
         |> render(Thermio.ChangesetView, "error.json", changeset: changeset)
+    end
+  end
+
+  defp create_changeset(%{
+    "temperature" => temperature,
+    "humidity" => humidity,
+    "heatIndex" => heat_index
+  }) do
+    changeset = Climate.changeset(%Climate{}, %{
+      "temperature" => temperature,
+      "humidity" => humidity,
+      "heat_index" => heat_index
+    })
+
+    if length(changeset.errors) > 0 do
+      {:error, "Validation required"}
+    else
+      {:ok, changeset}
+    end
+  end
+
+  def create_from_json(message) do
+    with {:ok, json} <- Poison.decode(message),
+      {:ok, changeset} <- create_changeset(json),
+      {:ok, %{id: id}} <- Repo.insert(changeset)
+    do
+      Logger.info("Climate #{id} created")
+    else
+      {:error, error} -> Logger.error(error)
     end
   end
 
