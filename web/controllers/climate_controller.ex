@@ -1,33 +1,49 @@
 defmodule Thermio.ClimateController do
   require Logger
   use Thermio.Web, :controller
+  use Timex
 
   alias Thermio.Climate
 
   def index(conn, _params) do
     climates =
       Thermio.Climate
-      |> where([c], c.inserted_at >= ago(1, "day"))
+      |> where([c], c.inserted_at >= ^Timex.shift(Timex.now(), days: -1))
       |> order_by(desc: :inserted_at)
       |> Thermio.Repo.all
 
     render(conn, "index.json", climates: climates)
   end
 
-  def create(conn, %{"climate" => climate_params}) do
-    changeset = Climate.changeset(%Climate{}, climate_params)
+  defp parse_date(str) do
+    Timex.parse!(str, "{YYYY}-{0M}-{0D}")
+    |> Timex.to_datetime(System.get_env("TIMEZONE"))
+  end
 
-    case Repo.insert(changeset) do
-      {:ok, climate} ->
-        conn
-        |> put_status(:created)
-        |> put_resp_header("location", climate_path(conn, :show, climate))
-        |> render("show.json", climate: climate)
-      {:error, changeset} ->
-        conn
-        |> put_status(:unprocessable_entity)
-        |> render(Thermio.ChangesetView, "error.json", changeset: changeset)
-    end
+  defp query_by_date_range(start_time, end_time) do
+    Thermio.Climate
+    |> where([c], c.inserted_at >= ^start_time)
+    |> where([c], c.inserted_at < ^end_time)
+    |> order_by(desc: :inserted_at)
+    |> Thermio.Repo.all
+  end
+
+  def index_by_date(conn, %{"date" => date_str}) do
+    start_time = parse_date(date_str)
+    end_time = Timex.shift(start_time, days: 1)
+
+    climates = query_by_date_range(start_time, end_time)
+    render(conn, "index.json", climates: climates)
+  end
+
+  def index_by_dates(conn, %{"start_date" => start_date_str, "end_date" => end_date_str}) do
+    start_time = parse_date(start_date_str)
+    end_time =
+      parse_date(end_date_str)
+      |> Timex.shift(days: 1)
+
+    climates = query_by_date_range(start_time, end_time)
+    render(conn, "index.json", climates: climates)
   end
 
   defp create_changeset(climate_params) do

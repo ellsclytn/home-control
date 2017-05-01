@@ -12,7 +12,9 @@ defmodule Thermio.Router do
   scope "/api", Thermio do
     pipe_through :api
 
-    resources "/climates", ClimateController
+    get "/climates/:date", ClimateController, :index_by_date
+    get "/climates/:start_date/:end_date", ClimateController, :index_by_dates
+    resources "/climates", ClimateController, except: [:create]
     resources "/aircon", AirconController
   end
 
