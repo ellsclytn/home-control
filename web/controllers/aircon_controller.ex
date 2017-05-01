@@ -4,8 +4,13 @@ defmodule Thermio.AirconController do
   alias Thermio.Aircon
 
   def index(conn, _params) do
-    aircons = Repo.all(Aircon)
-    render(conn, "index.json", aircons: aircons)
+    aircon =
+      Thermio.Aircon
+      |> order_by(desc: :inserted_at)
+      |> limit(1)
+      |> Thermio.Repo.one
+
+    render(conn, "show.json", aircon: aircon)
   end
 
   def create(conn, aircon_params) do
