@@ -15,9 +15,9 @@ defmodule Thermio.ClimateController do
     render(conn, "index.json", climates: climates)
   end
 
-  defp parse_date(str) do
+  defp parse_date(str, tz) do
     Timex.parse!(str, "{YYYY}-{0M}-{0D}")
-    |> Timex.to_datetime(System.get_env("TIMEZONE"))
+    |> Timex.to_datetime(tz)
   end
 
   defp query_by_date_range(start_time, end_time) do
@@ -28,18 +28,20 @@ defmodule Thermio.ClimateController do
     |> Thermio.Repo.all
   end
 
-  def index_by_date(conn, %{"date" => date_str}) do
-    start_time = parse_date(date_str)
+  def index_by_date(conn, %{"date" => date_str} = params) do
+    tz = Map.get(params, "tz", System.get_env("TIMEZONE"))
+    start_time = parse_date(date_str, tz)
     end_time = Timex.shift(start_time, days: 1)
 
     climates = query_by_date_range(start_time, end_time)
     render(conn, "index.json", climates: climates)
   end
 
-  def index_by_dates(conn, %{"start_date" => start_date_str, "end_date" => end_date_str}) do
-    start_time = parse_date(start_date_str)
+  def index_by_dates(conn, %{"start_date" => start_date_str, "end_date" => end_date_str} = params) do
+    tz = Map.get(params, "tz", System.get_env("TIMEZONE"))
+    start_time = parse_date(start_date_str, tz)
     end_time =
-      parse_date(end_date_str)
+      parse_date(end_date_str, tz)
       |> Timex.shift(days: 1)
 
     climates = query_by_date_range(start_time, end_time)
