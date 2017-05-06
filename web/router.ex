@@ -14,8 +14,9 @@ defmodule Thermio.Router do
 
     get "/climates/:date", ClimateController, :index_by_date
     get "/climates/:start_date/:end_date", ClimateController, :index_by_dates
-    resources "/climates", ClimateController, except: [:create]
-    resources "/aircon", AirconController
+    resources "/climates", ClimateController, except: [:create, :new, :edit]
+    resources "/aircon", AirconController, except: [:new, :edit]
+    resources "/soils", SoilController, except: [:create, :new, :edit, :update]
   end
 
   scope "/health", Thermio do
