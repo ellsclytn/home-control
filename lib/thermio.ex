@@ -27,6 +27,7 @@ defmodule Thermio do
 
     Process.register(mqtt_pid, :mqtt)
     Thermio.MqttClient.start
+    HTTPoison.start
     supervisor
   end
 
