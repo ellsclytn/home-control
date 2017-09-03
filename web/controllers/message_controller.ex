@@ -17,30 +17,69 @@ defmodule Thermio.MessageController do
     end
   end
 
-  def create(conn, %{"message" => %{
-    "text" => text,
-    "chat" => %{ "id" => chat_id }
-  }}) do
+  defp send_telegram_message(message) do
     HTTPoison.post!(
       "https://api.telegram.org/bot#{System.get_env("TELEGRAM_TOKEN")}/sendMessage",
       Poison.encode!(%{
-        "chat_id" => chat_id,
-        "text" => "Message \"#{text}\" received."
+        "chat_id" => String.to_integer(System.get_env("TELEGRAM_CHAT_ID")),
+        "text" => message
       }),
       [{"Content-Type", "application/json"}]
     )
+  end
 
+  defp set_ac(text) do
+
+    turning_off = ~r/(aircon off)/iu
+    setting_temperature = ~r/(aircon )(\d+)/iu
+    analysis =
+      cond do
+        String.match?(text, setting_temperature) ->
+          [_, _, temperature] = Regex.run(~r/(aircon )(\d+)/iu, text)
+          %{
+            "message" => "Setting the AC to #{temperature}.",
+            "settings" => %{
+              "temp" => String.to_integer(temperature),
+              "power" => 1
+            }
+          }
+        String.match?(text, turning_off) ->
+          %{
+            "message" => "Turning off the AC",
+            "settings" => %{
+              "power" => 0
+            }
+          }
+        true -> nil
+      end
+
+    if (analysis) do
+      Thermio.AirconController.set_aircon(analysis["settings"])
+      send_telegram_message(analysis["message"])
+    end
+
+  end
+
+  def create(conn, %{"message" => %{
+    "text" => text
+  }}) do
     changeset = Message.changeset(%Message{}, %{
       "text" => text,
       "origin" => "telegram"
     })
 
     case Repo.insert(changeset) do
-      {:ok, _} ->
-        send_resp(conn, :ok, "")
+      {:ok, _} -> :noop
       {:error, _} ->
         IO.warn("Failed to save message to database.")
     end
+
+    cond do
+      String.match?(text, ~r/(aircon )/iu) -> set_ac(text)
+      true -> IO.puts("No relevant operation.")
+    end
+
+    send_resp(conn, :ok, "")
   end
 
   def show(conn, %{"id" => id}) do

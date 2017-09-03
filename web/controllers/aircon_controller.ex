@@ -13,17 +13,42 @@ defmodule Thermio.AirconController do
     render(conn, "show.json", aircon: aircon)
   end
 
-  def create(conn, aircon_params) do
-    changeset = Aircon.changeset(%Aircon{}, aircon_params)
+  def set_aircon(params) do
+    aircon =
+      Thermio.Aircon
+      |> order_by(desc: :inserted_at)
+      |> limit(1)
+      |> Thermio.Repo.one
 
-    mqtt_payload = aircon_params
-    |> Map.merge(%{"type" => "set"})
-    |> ProperCase.to_camel_case
-    |> Poison.encode!
+    intitial_state = %{
+      "power" => aircon.power,
+      "mode" => aircon.mode,
+      "fan" => aircon.fan,
+      "temp" => aircon.temp,
+      "v_dir" => aircon.v_dir,
+      "h_dir" => aircon.h_dir
+    }
+
+    changeset_params =
+      intitial_state
+      |> Map.merge(params)
+
+    changeset = Aircon.changeset(%Aircon{}, changeset_params)
+
+
+    mqtt_payload =
+      changeset_params
+      |> Map.merge(%{"type" => "set"})
+      |> ProperCase.to_camel_case
+      |> Poison.encode!
 
     Thermio.MqttClient.publish_message("heatpump", mqtt_payload)
 
-    case Repo.insert(changeset) do
+    Repo.insert(changeset)
+  end
+
+  def create(conn, params) do
+    case set_aircon(params) do
       {:ok, aircon} ->
         conn
         |> put_status(:created)
