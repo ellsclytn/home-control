@@ -70,8 +70,6 @@ defmodule Thermio.MqttClient do
     case topic do
       "climate" ->
         Thermio.ClimateController.create_from_json(message)
-      "soil" ->
-        Thermio.SoilController.create_from_string(message)
       _ ->
         Logger.warn("Invalid topic #{topic}")
     end
