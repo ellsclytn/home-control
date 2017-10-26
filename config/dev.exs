@@ -35,8 +35,8 @@ config :phoenix, :stacktrace_depth, 20
 # Configure your database
 config :thermio, Thermio.Repo,
   adapter: Ecto.Adapters.Postgres,
-  username: "ellis",
-  password: "postgres",
+  username: "postgres",
+  password: "mysecretpassword",
   database: "thermio_dev",
   hostname: "localhost",
   pool_size: 10
