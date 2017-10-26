@@ -24,7 +24,7 @@ config :thermio, Thermio.Endpoint,
     host: System.get_env("MQTT_SERVER"),
     username: System.get_env("MQTT_USER"),
     password: System.get_env("MQTT_PASS"),
-    port: String.to_integer(System.get_env("MQTT_PORT")),
+    port: String.to_integer(System.get_env("MQTT_PORT") || "1883"),
     client_id: System.get_env("MQTT_CLIENT_ID"),
     queues: [
       [topic: "climate", qos: 0]
