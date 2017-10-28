@@ -43,7 +43,6 @@ defmodule Thermio.MqttClientWatcher do
     )
 
     options = [
-      id: :rand.uniform(65535),
       topics: queues.topics,
       qoses: queues.qoses]
 
