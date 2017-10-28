@@ -38,7 +38,7 @@ defmodule Thermio.Mixfile do
      {:gettext, "~> 0.11"},
      {:cowboy, "~> 1.0"},
      {:joken, "~> 1.1"},
-     {:hulaaki, "~> 0.0.4"},
+     {:hulaaki, git: "git://github.com/ellsclytn/hulaaki.git"},
      {:proper_case, "~> 1.0.1"},
      {:timex, "~> 3.1"},
      {:timex_ecto, "~> 3.1"},
