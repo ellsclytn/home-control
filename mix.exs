@@ -18,8 +18,7 @@ defmodule Thermio.Mixfile do
   # Type `mix help compile.app` for more information.
   def application do
     [mod: {Thermio, []},
-     applications: [:phoenix, :phoenix_pubsub, :phoenix_html, :cowboy, :logger, :gettext,
-                    :phoenix_ecto, :postgrex, :timex, :httpoison]]
+     extra_applications: [:logger]]
   end
 
   # Specifies which paths to compile per environment.
