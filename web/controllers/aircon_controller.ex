@@ -19,6 +19,14 @@ defmodule Thermio.AirconController do
       |> order_by(desc: :inserted_at)
       |> limit(1)
       |> Thermio.Repo.one
+      |> Kernel.||(%{
+        power: 0,
+        mode: 3,
+        fan: 0,
+        temp: 24,
+        v_dir: 0,
+        h_dir: 0
+      })
 
     intitial_state = %{
       "power" => aircon.power,
