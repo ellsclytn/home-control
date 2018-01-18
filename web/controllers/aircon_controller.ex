@@ -55,6 +55,24 @@ defmodule Thermio.AirconController do
     Repo.insert(changeset)
   end
 
+  def handle_dialogflow(conn, %{"result" => %{"action" => "input.welcome"}}) do
+    %{heat_index: heat_index} =
+      Thermio.Climate
+      |> order_by(desc: :inserted_at)
+      |> limit(1)
+      |> Thermio.Repo.one
+
+    aircon =
+      Thermio.Aircon
+      |> order_by(desc: :inserted_at)
+      |> limit(1)
+      |> Thermio.Repo.one
+
+    conn
+    |> put_status(:ok)
+    |> render(Thermio.DialogflowView, "summary.json", %{aircon: aircon, heat_index: heat_index})
+  end
+
   def handle_dialogflow(conn, %{"result" => %{"action" => "ac.setting", "parameters" => %{
     "mode" => mode,
     "temp" => power,
