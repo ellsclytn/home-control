@@ -55,10 +55,10 @@ defmodule Thermio.AirconController do
     Repo.insert(changeset)
   end
 
-  def handle_dialogflow(conn, %{"result" => %{ "parameters" => %{
-    "ac-mode" => mode,
-    "ac-power" => power,
-    "ac-temp" => temp
+  def handle_dialogflow(conn, %{"result" => %{"action" => "ac.setting", "parameters" => %{
+    "mode" => mode,
+    "temp" => power,
+    "power" => temp
   }}}) do
     modes = %{
       "auto" => 1,
