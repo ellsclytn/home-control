@@ -55,6 +55,45 @@ defmodule Thermio.AirconController do
     Repo.insert(changeset)
   end
 
+  def handle_dialogflow(conn, %{"result" => %{ "parameters" => %{
+    "ac-mode" => mode,
+    "ac-power" => power,
+    "ac-temp" => temp
+  }}}) do
+    modes = %{
+      "auto" => 1,
+      "heat" => 2,
+      "cool" => 3,
+      "dry" => 4,
+      "fan" => 5
+    }
+
+    powers = %{
+      "on" => 1,
+      "off" => 0
+    }
+
+    temp = if (temp == "" || !temp), do: 24, else: temp
+
+    params = %{
+      "mode" => modes[mode] || 3,
+      "power" => powers[power] || 1,
+      "temp" => temp
+    }
+
+    case set_aircon(params) do
+      {:ok, aircon} ->
+        conn
+        |> put_status(:created)
+        |> put_resp_header("location", aircon_path(conn, :show, aircon))
+        |> render(Thermio.DialogflowView, "update.json", aircon: aircon)
+      {:error, changeset} ->
+        conn
+        |> put_status(:unprocessable_entity)
+        |> render(Thermio.ChangesetView, "error.json", changeset: changeset)
+    end
+  end
+
   def create(conn, params) do
     case set_aircon(params) do
       {:ok, aircon} ->
