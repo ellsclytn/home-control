@@ -86,16 +86,12 @@ defmodule Thermio.AirconController do
       "fan" => 5
     }
 
-    powers = %{
-      "on" => 1,
-      "off" => 0
-    }
-
+    power = if (power == "on"), do: 1, else: 0
     temp = if (temp == "" || !temp), do: 24, else: temp
 
     params = %{
       "mode" => modes[mode] || 3,
-      "power" => powers[power] || 1,
+      "power" => power,
       "temp" => temp
     }
 
