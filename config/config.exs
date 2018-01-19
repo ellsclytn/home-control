@@ -27,7 +27,7 @@ config :thermio, Thermio.Endpoint,
     port: String.to_integer(System.get_env("MQTT_PORT") || "1883"),
     client_id: System.get_env("MQTT_CLIENT_ID"),
     queues: [
-      [topic: "climate", qos: 0]
+      {"climate", 0}
     ]]
 
 # Configures Elixir's Logger

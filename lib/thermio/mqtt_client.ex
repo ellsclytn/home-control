@@ -1,41 +1,49 @@
 defmodule Thermio.MqttClient do
   require Logger
-  use Hulaaki.Client
+  use GenMQTT
 
   defp config do
     Application.get_env(:thermio, Thermio.Endpoint)[:mqtt]
   end
 
-  def publish_message(topic, message) do
-    packet_id = :rand.uniform(65535)
-    options = [
-      id: packet_id,
-      topic: topic,
-      message: message,
-      dup: 0,
-      qos: 0,
-      retain: 0]
-
-    Thermio.MqttClient.publish(:mqtt, options)
-    Logger.info("Published #{message} to #{topic} with packet_id #{packet_id}.")
+  def start_link do
+    GenMQTT.start_link(__MODULE__, nil, [
+      name: :mqtt,
+      host: config()[:host],
+      password: config()[:password],
+      port: config()[:port],
+      reconnect_timeout: 5,
+      username: config()[:username],
+    ])
   end
 
-  def on_connect(_options) do
+  def on_connect(state) do
     Logger.info("Connected to MQTT host #{config()[:host]}")
+    :ok = GenMQTT.subscribe(Process.whereis(:mqtt), config()[:queues])
+
+    {:ok, state}
   end
 
-  def on_disconnect(_options) do
+  def on_disconnect(state) do
     Logger.info("Disconnected from MQTT host #{config()[:host]}")
+    
+    {:ok, state}
   end
 
-  def on_subscribed_publish(message: %{ message: body, topic: topic }, state: _state) do
-    Logger.info("Message #{body} from #{topic}.")
-
+  def on_publish([topic], message, state) do
     case topic do
       "climate" ->
-        Thermio.ClimateController.create_from_json(body)
+        Thermio.ClimateController.create_from_json(message)
       _ ->
         Logger.warn("Invalid topic #{topic}")
     end
+
+    {:ok, state}
+  end
+
+  def publish_message(topic, message) do
+    GenMQTT.publish(Process.whereis(:mqtt), topic, message, 0)
+
+    Logger.info("Published #{message} to #{topic}.")
   end
 end

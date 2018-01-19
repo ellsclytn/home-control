@@ -38,11 +38,11 @@ defmodule Thermio.Mixfile do
      {:gettext, "~> 0.11"},
      {:cowboy, "~> 1.0"},
      {:joken, "~> 1.1"},
-     {:hulaaki, git: "git://github.com/ellsclytn/hulaaki.git"},
      {:proper_case, "~> 1.0.1"},
      {:timex, "~> 3.1"},
      {:timex_ecto, "~> 3.1"},
-     {:httpoison, "~> 0.13"}]
+     {:httpoison, "~> 0.13"},
+     {:gen_mqtt, "~> 0.4.0"}]
   end
 
   # Aliases are shortcuts or tasks specific to the current project.

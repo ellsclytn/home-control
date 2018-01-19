@@ -13,18 +13,14 @@ defmodule Thermio do
       # Start the endpoint when the application starts
       supervisor(Thermio.Endpoint, []),
       # Start the MQTT Client
-      worker(Thermio.MqttClientWatcher, [])
+      supervisor(Thermio.MqttClient, [])
       # Start your own worker by calling: Thermio.Worker.start_link(arg1, arg2, arg3)
       # worker(Thermio.Worker, [arg1, arg2, arg3]),
     ]
 
     # See http://elixir-lang.org/docs/stable/elixir/Supervisor.html
     # for other strategies and supported options
-    opts = [
-      strategy: :one_for_one,
-      name: Thermio.Supervisor,
-      max_restarts: 999999999,
-      max_seconds: 999999999]
+    opts = [strategy: :one_for_one, name: Thermio.Supervisor]
     Supervisor.start_link(children, opts)
   end
 
