@@ -75,8 +75,8 @@ defmodule Thermio.AirconController do
 
   def handle_dialogflow(conn, %{"result" => %{"action" => "ac.setting", "parameters" => %{
     "mode" => mode,
-    "temp" => power,
-    "power" => temp
+    "temp" => temp,
+    "power" => power
   }}}) do
     modes = %{
       "auto" => 1,
@@ -86,7 +86,7 @@ defmodule Thermio.AirconController do
       "fan" => 5
     }
 
-    power = if (power == "on"), do: 1, else: 0
+    power = if (power == "off"), do: 0, else: 1
     temp = if (temp == "" || !temp), do: 24, else: temp
 
     params = %{
