@@ -42,7 +42,8 @@ defmodule Thermio.Mixfile do
      {:timex, "~> 3.1"},
      {:timex_ecto, "~> 3.1"},
      {:httpoison, "~> 0.13"},
-     {:gen_mqtt, "~> 0.4.0"}]
+     {:gen_mqtt, "~> 0.4.0"},
+     {:oauth2, "~> 0.9"}]
   end
 
   # Aliases are shortcuts or tasks specific to the current project.
